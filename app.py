@@ -89,4 +89,13 @@ if st.button("RUN AI MATCHING ENGINE 🚀"):
             <p>Based on {certs[0] if certs else 'Academic Achievement'} and Excellence.</p>
             <hr>
             <p><b>Benefit:</b> ₹2,00,000 Total | <b>Status:</b> Applications Open</p>
-            <a href="https://
+            <a href="https://www.reliancefoundation.org/" target="_blank">
+                <button style="background: #10B981; color: white; border: none; padding: 8px 20px; border-radius: 5px; cursor: pointer;">View Requirements</button>
+            </a>
+        </div>
+        """, unsafe_allow_html=True)
+
+# --- 6. TRUST FOOTER ---
+st.sidebar.markdown("### 🛡️ Verified System")
+st.sidebar.info("This prototype uses Gemini AI to verify certificates against Government databases.")
+st.sidebar.warning("🔔 **Alert:** Tata Scholarship expires in 48 hours!")
