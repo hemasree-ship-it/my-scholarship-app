@@ -106,44 +106,51 @@ with tab2:
 # ---------- SCHOLARSHIP MATCHES ----------
 with tab3:
     st.subheader("AI Scholarship Matching")
+    
     if st.button("Find My Scholarships 🔎"):
         with st.spinner("AI analyzing your academic profile..."):
             time.sleep(1.5)
         
-        # SUCCESS ANIMATION (New Feature)
-        st.balloons()
-        st.success(f"🤖 AI has found matches for {name}!")
-
+        # We start by assuming nothing is found
         results = [
             {"name": "National Scholarship Portal (NSP)", "min": 80, "link": "https://scholarships.gov.in/", "desc": "Government of India merit support."},
             {"name": "Reliance Foundation Scholarship", "min": 75, "link": "https://www.reliancefoundation.org/", "desc": "Private merit-based grant."}
         ]
 
-        found = False
-        for s in results:
-            if marks_12 >= s["min"] and income <= 600000:
-                found = True
+        # Filter logic
+        matched_list = [s for s in results if marks_12 >= s["min"] and income <= 600000]
+
+        if matched_list:
+            # ONLY SHOW ANIMATION IF MATCHES EXIST
+            st.balloons()
+            st.success(f"🎊 Amazing! We found {len(matched_list)} scholarships for you, {name}!")
+            
+            for s in matched_list:
                 st.markdown(f"""
                 <div class="scholarship-card">
                     <h3 style="color:#1a73e8;">✅ {s['name']}</h3>
                     <p>{s['desc']}</p>
-                    <p><b>Eligibility:</b> Minimum {s['min']}% marks achieved</p>
-                    <a href="{s['link']}" target="_blank"><button style="background:#1a73e8; color:white; padding:10px 22px; border:none; border-radius:20px; cursor:pointer;">Apply Now</button></a>
+                    <p><b>Eligibility:</b> Criteria Met</p>
+                    <a href="{s['link']}" target="_blank">
+                        <button style="background:#1a73e8; color:white; padding:10px 22px; border:none; border-radius:20px; cursor:pointer;">
+                            Apply Now
+                        </button>
+                    </a>
                 </div>
                 """, unsafe_allow_html=True)
-
-        if found:
-            # DOWNLOAD BUTTON (New Feature)
+            
+            # Show download button only if matches found
             st.divider()
-            report_text = f"Scholarship Report for {name}\nMarks: {marks_12}%\nIncome: {income}\nEligible for: NSP, Reliance"
+            report_text = f"Scholarship Report for {name}\nStatus: ELIGIBLE\nMatches: {', '.join([x['name'] for x in matched_list])}"
             st.download_button(
-                label="📥 Download My Eligibility Report (PDF)",
+                label="📥 Download Eligibility Report",
                 data=report_text,
-                file_name=f"{name}_Scholarship_Report.txt",
+                file_name=f"ScholarMatch_{name}.txt",
                 mime="text/plain"
             )
         else:
-            st.warning("No scholarships matched. Try updating your profile.")
+            # No animation here, just a helpful warning
+            st.warning("No scholarships matched your current profile. Try adjusting your details or check back later!")
     
     progress.progress(100)
 
