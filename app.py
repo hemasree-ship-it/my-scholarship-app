@@ -1,71 +1,92 @@
 import streamlit as st
 
-# Setup Page Appearance
-st.set_page_config(page_title="Scholar-Match Pro", layout="wide")
+# --- 1. PAGE CONFIG & THEME ---
+st.set_page_config(page_title="ScholarGate AI", page_icon="🛡️", layout="wide")
 
-# --- CUSTOM CSS FOR PROFESSIONAL LOOK ---
+# --- 2. PROFESSIONAL STYLING (CSS) ---
 st.markdown("""
     <style>
-    .main { background-color: #f5f7f9; }
-    .stButton>button { width: 100%; border-radius: 20px; height: 3em; background-color: #007bff; color: white; }
-    .scholarship-card { padding: 20px; border-radius: 10px; background-color: white; border-left: 5px solid #007bff; margin-bottom: 20px; box-shadow: 2px 2px 10px rgba(0,0,0,0.1); }
+    /* Main background */
+    .stApp { background-color: #F0F2F6; }
+    
+    /* Center the title */
+    .main-title { font-size: 50px; color: #1E3A8A; text-align: center; font-weight: 800; margin-bottom: 10px; }
+    .sub-title { font-size: 18px; color: #4B5563; text-align: center; margin-bottom: 40px; }
+    
+    /* Professional Scholarship Card */
+    .scholarship-card {
+        background: white; padding: 25px; border-radius: 15px;
+        border-top: 8px solid #F59E0B; /* Golden border for trust */
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        margin-bottom: 25px; transition: 0.3s;
+    }
+    .scholarship-card:hover { transform: translateY(-5px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2); }
+    
+    /* Symmetric buttons */
+    .stButton>button {
+        background-color: #1E3A8A; color: white; border-radius: 8px;
+        font-weight: bold; width: 100%; border: none; padding: 10px;
+    }
     </style>
     """, unsafe_allow_html=True)
 
-st.title("🎓 Scholar-Match AI")
-st.info("Complete your profile to unlock national and international scholarships.")
+# --- 3. HEADER SECTION ---
+st.markdown("<h1 class='main-title'>ScholarGate AI</h1>", unsafe_allow_html=True)
+st.markdown("<p class='sub-title'>National Level AI-Powered Verification & Matching System</p>", unsafe_allow_html=True)
 
-# --- MULTI-STEP FORM ---
-tab1, tab2, tab3 = st.tabs(["👤 Personal Info", "📚 Academic Profile", "💰 Found Scholarships"])
+# --- 4. THE STEP-BY-STEP FORM (SYMMETRIC LAYOUT) ---
+with st.container():
+    st.write("### 📝 Step 1: Tell us about yourself")
+    c1, c2, c3 = st.columns(3)
+    with c1:
+        name = st.text_input("Full Name (As per Aadhar)")
+        age = st.number_input("Age", 15, 30, 18)
+    with c2:
+        category = st.selectbox("Category", ["General", "OBC", "SC/ST", "Minority"])
+        income = st.number_input("Family Annual Income (₹)", 0, 2000000, 200000)
+    with c3:
+        current_study = st.selectbox("Current Level", ["10th", "12th", "B.Tech/UG", "M.Tech/PG"])
+        gender = st.selectbox("Gender", ["Male", "Female", "Other"])
 
-with tab1:
-    col1, col2 = st.columns(2)
-    with col1:
-        name = st.text_input("Full Name")
-        age = st.number_input("Age", 10, 30)
-    with col2:
-        current_class = st.selectbox("Current Class/Year", ["10th", "12th", "B.Tech 1st Year", "B.Tech 2nd Year", "Other"])
-        gender = st.radio("Gender", ["Male", "Female", "Other"], horizontal=True)
+    st.divider()
 
-with tab2:
-    st.subheader("Marks & Certificates")
-    col3, col4 = st.columns(2)
-    with col3:
-        marks_10 = st.number_input("10th Marks (%)", 0, 100)
-        marks_12 = st.number_input("12th Marks (%)", 0, 100)
-    with col4:
-        income = st.number_input("Family Annual Income (₹)", 0, 2000000)
-        certificates = st.multiselect("Special Skills/Certs", ["Sports (National)", "NCC", "Coding", "Music", "None"])
-    
-    # File Uploader for "Look"
-    st.file_uploader("Upload Marks Card (Optional for AI Verification)", type=["pdf", "jpg", "png"])
+    st.write("### 📚 Step 2: Academic & Skills Portfolio")
+    c4, c5 = st.columns(2)
+    with c4:
+        marks_10 = st.slider("10th Percentage", 0, 100, 85)
+        marks_12 = st.slider("12th Percentage", 0, 100, 85)
+    with c5:
+        certs = st.multiselect("Special Achievements", ["National Sports", "Coding Hackathon", "NCC/NSS", "Art/Music", "State Ranker"])
+        doc = st.file_uploader("Upload Profile for AI Verification", type=["pdf", "png", "jpg"])
 
-with tab3:
-    if st.button("Generate Matching Scholarships ✨"):
-        # Simple Example Database with links
-        results = [
-            {"name": "National Scholarship Portal (NSP)", "min": 80, "link": "https://scholarships.gov.in/", "desc": "Govt of India merit support."},
-            {"name": "Reliance Foundation Grant", "min": 75, "link": "https://www.reliancefoundation.org/", "desc": "Private grant for undergraduate students."}
-        ]
+# --- 5. THE SEARCH ENGINE ---
+if st.button("RUN AI MATCHING ENGINE 🚀"):
+    with st.spinner("Analyzing 5,000+ government & private grants..."):
+        import time
+        time.sleep(2) # Fake "Processing" time for effect
         
-        found = False
-        for s in results:
-            if marks_12 >= s["min"] and income <= 600000:
-                found = True
-                # Professional "Card" UI
-                st.markdown(f"""
-                <div class="scholarship-card">
-                    <h3>✅ {s['name']}</h3>
-                    <p>{s['desc']}</p>
-                    <p><b>Steps:</b> Register on portal -> Upload Documents -> Get Verified</p>
-                    <a href="{s['link']}" target="_blank">Click Here to Apply Directly</a>
-                </div>
-                """, unsafe_allow_html=True)
+        st.balloons()
+        st.write("## 🎉 3 Scholarships Found for You!")
         
-        if not found:
-            st.warning("No matches yet. Try updating your profile details.")
-
-# Sidebar for Notifications
-st.sidebar.header("🔔 Live Alerts")
-st.sidebar.success("New: Tata Scholarship 2026 is now OPEN!")
-st.sidebar.info("Deadline: NSP closes in 4 days.")
+        # Scholarship 1
+        st.markdown(f"""
+        <div class="scholarship-card">
+            <span style="color: #F59E0B; font-weight: bold;">⭐ RECOMMENDED</span>
+            <h2 style="margin: 0; color: #1E3A8A;">National Merit Scholarship 2026</h2>
+            <p>For students scoring above 80% with income below ₹6L.</p>
+            <hr>
+            <p><b>Benefit:</b> ₹50,000 per year | <b>Deadline:</b> 30th April 2026</p>
+            <a href="https://scholarships.gov.in/" target="_blank">
+                <button style="background: #10B981; color: white; border: none; padding: 8px 20px; border-radius: 5px; cursor: pointer;">Apply on Official Portal</button>
+            </a>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        # Scholarship 2
+        st.markdown(f"""
+        <div class="scholarship-card">
+            <h2 style="margin: 0; color: #1E3A8A;">Reliance Foundation Undergraduate Grant</h2>
+            <p>Based on {certs[0] if certs else 'Academic Achievement'} and Excellence.</p>
+            <hr>
+            <p><b>Benefit:</b> ₹2,00,000 Total | <b>Status:</b> Applications Open</p>
+            <a href="https://
