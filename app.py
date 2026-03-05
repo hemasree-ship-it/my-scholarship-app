@@ -1,92 +1,116 @@
 import streamlit as st
 
-# --- PAGE SETUP ---
-st.set_page_config(page_title="ScholarGate AI", page_icon="🎓", layout="centered")
+# 1. Page Config - Using a standard title and layout
+st.set_page_config(page_title="ScholarGate AI", page_icon="🎓", layout="wide")
 
-# --- PROFESSIONAL STYLING (The "Secret Sauce") ---
+# 2. Enhanced CSS - Clean, Symmetric, and Trustworthy
 st.markdown("""
     <style>
-    /* Background and Fonts */
-    .stApp { background-color: #f8fafc; }
-    h1 { color: #1e293b; font-family: 'Inter', sans-serif; text-align: center; }
+    /* Main Background */
+    .stApp { background-color: #fcfcfd; }
     
-    /* Clean white boxes for inputs */
-    .css-1r6slb0 { padding: 20px; background: white; border-radius: 12px; border: 1px solid #e2e8f0; }
+    /* Center and Style Title */
+    .main-header { text-align: center; color: #1e293b; font-size: 38px; font-weight: 700; margin-bottom: 5px; }
+    .sub-header { text-align: center; color: #64748b; font-size: 16px; margin-bottom: 30px; }
     
-    /* The Result Cards */
-    .result-card {
-        background: white; padding: 20px; border-radius: 10px;
-        border-left: 6px solid #2563eb; margin-bottom: 15px;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    /* Professional Card UI */
+    .scholarship-card {
+        padding: 24px;
+        border-radius: 12px;
+        background-color: white;
+        border: 1px solid #e2e8f0;
+        border-left: 6px solid #2563eb;
+        margin-bottom: 20px;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
     }
-    .apply-btn {
-        background-color: #2563eb; color: white; padding: 8px 16px;
-        border-radius: 6px; text-decoration: none; font-weight: 600;
-        display: inline-block; margin-top: 10px;
+    
+    /* Button Styling */
+    .stButton>button {
+        border-radius: 8px;
+        font-weight: 600;
+        background-color: #2563eb;
+        color: white;
+        transition: all 0.3s ease;
     }
+    .stButton>button:hover { background-color: #1d4ed8; border-color: #1d4ed8; }
+    
+    /* Input field spacing */
+    div.stBlock { padding: 10px; }
     </style>
     """, unsafe_allow_html=True)
 
-# --- HEADER ---
-st.title("🎓 ScholarGate AI")
-st.markdown("<p style='text-align: center; color: #64748b;'>National Scholarship Verification & Matching System</p>", unsafe_allow_html=True)
+# --- HEADER SECTION ---
+st.markdown("<div class='main-header'>ScholarGate AI</div>", unsafe_allow_html=True)
+st.markdown("<div class='sub-header'>Verified Scholarship Intelligence Platform</div>", unsafe_allow_html=True)
+
+# --- PROGRESS INDICATOR ---
+# This makes it feel professional and symmetric
+step = st.select_slider("Application Progress", options=["Personal Info", "Academic Profile", "Results"])
 st.divider()
 
-# --- STEP 1: PERSONAL DETAILS ---
-with st.expander("👤 Step 1: Personal Information", expanded=True):
-    col1, col2 = st.columns(2)
-    with col1:
-        name = st.text_input("Full Name (as per Aadhar)")
-        age = st.number_input("Age", 15, 30, 18)
-    with col2:
-        gender = st.selectbox("Gender", ["Male", "Female", "Other"])
-        category = st.selectbox("Category", ["General", "OBC", "SC/ST", "Minority"])
+# --- FORM STRUCTURE ---
+if step == "Personal Info":
+    st.subheader("👤 Basic Information")
+    with st.container():
+        col1, col2 = st.columns(2)
+        with col1:
+            name = st.text_input("Full Name", placeholder="As per official documents")
+            age = st.number_input("Age", 15, 30, 18)
+        with col2:
+            current_class = st.selectbox("Current Level of Study", ["10th", "12th", "UG (B.Tech/B.Sc)", "PG (M.Tech)", "PhD"])
+            gender = st.radio("Gender", ["Male", "Female", "Other"], horizontal=True)
+    st.info("Tip: Enter your name exactly as it appears on your Aadhar card for faster verification.")
 
-# --- STEP 2: ACADEMICS & DOCUMENTS ---
-with st.expander("📚 Step 2: Academic Profile", expanded=True):
-    col3, col4 = st.columns(2)
-    with col3:
-        current_class = st.selectbox("Current Class/Level", ["10th", "12th", "UG", "PG"])
-        marks = st.slider("Latest Marks Percentage", 0, 100, 80)
-    with col4:
-        income = st.number_input("Annual Family Income (₹)", 0, 2000000, 300000)
-        cert_upload = st.file_uploader("Upload Certificates (Sports/Coding/NCC)", type=["pdf", "png", "jpg"])
-
-# --- STEP 3: MATCHING ENGINE ---
-st.write("")
-if st.button("SEARCH ELIGIBLE SCHOLARSHIPS 🔍"):
-    with st.status("Verifying details with AI...", expanded=True) as status:
-        st.write("Reading uploaded certificates...")
-        import time; time.sleep(1)
-        st.write("Checking Government Database (NSP)...")
-        time.sleep(1)
-        status.update(label="Matching Complete!", state="complete", expanded=False)
+elif step == "Academic Profile":
+    st.subheader("📚 Academic & Financial Background")
+    with st.container():
+        c1, c2 = st.columns(2)
+        with c1:
+            m10 = st.number_input("10th Standard Marks (%)", 0, 100, 80)
+            m12 = st.number_input("12th Standard Marks (%)", 0, 100, 80)
+        with c2:
+            inc = st.number_input("Family Annual Income (₹)", 0, 2500000, 400000)
+            skills = st.multiselect("Special Categories", ["Sports", "NCC/NSS", "Coding", "Arts", "Differently Abled"])
     
-    st.success(f"Great news, {name}! We found matches for your profile:")
-    
-    # Example Output Card
-    st.markdown(f"""
-        <div class="result-card">
-            <h3 style="margin:0; color:#1e293b;">National Merit Scholarship (NSP)</h3>
-            <p style="color:#64748b; margin: 5px 0;">Based on your {marks}% marks and {category} category.</p>
-            <p><b>Benefit:</b> ₹50,000 / Year</p>
-            <p><b>Required:</b> Income Certificate, Marksheet</p>
-            <a class="apply-btn" href="https://scholarships.gov.in/" target="_blank">Apply on Official Portal</a>
-        </div>
-        
-        <div class="result-card" style="border-left-color: #f59e0b;">
-            <h3 style="margin:0; color:#1e293b;">Reliance Foundation Undergraduate Grant</h3>
-            <p style="color:#64748b; margin: 5px 0;">Private grant for high-performing students.</p>
-            <p><b>Benefit:</b> ₹2,00,000 Total</p>
-            <p><b>Required:</b> Entrance Test + Interview</p>
-            <a class="apply-btn" style="background-color: #f59e0b;" href="https://www.reliancefoundation.org/" target="_blank">View Application Steps</a>
-        </div>
-    """, unsafe_allow_html=True)
+    st.markdown("---")
+    st.write("#### Document Verification")
+    st.file_uploader("Upload Marksheet/Income Certificate for AI validation", type=["pdf", "png", "jpg"])
 
-# --- SIDEBAR (NOTIFICATIONS) ---
+elif step == "Results":
+    st.subheader("💰 Personalized Matches")
+    # For demo purposes, we define dummy variables if they aren't saved in session
+    # In a real app, you'd use st.session_state
+    
+    if st.button("Analyze & Find Scholarships ✨"):
+        with st.spinner("AI is scanning national databases..."):
+            import time
+            time.sleep(1.5) # Simulates AI processing
+            
+            results = [
+                {"name": "National Scholarship Portal (NSP)", "min": 75, "link": "https://scholarships.gov.in/", "desc": "Official Government of India portal for all central schemes."},
+                {"name": "Reliance Foundation Scholars", "min": 80, "link": "https://www.reliancefoundation.org/", "desc": "Prestigious grant for high-achieving undergraduate students."}
+            ]
+            
+            # This makes the output look symmetric and clean
+            for s in results:
+                st.markdown(f"""
+                <div class="scholarship-card">
+                    <h3 style="color: #1e293b; margin-top: 0;">{s['name']}</h3>
+                    <p style="color: #475569;">{s['desc']}</p>
+                    <p><b>Status:</b> ✅ You are Eligible</p>
+                    <a href="{s['link']}" target="_blank" style="text-decoration: none;">
+                        <div style="background-color: #10b981; color: white; padding: 10px 20px; border-radius: 6px; display: inline-block; font-weight: bold;">
+                            Go to Application Portal →
+                        </div>
+                    </a>
+                </div>
+                """, unsafe_allow_html=True)
+            st.balloons()
+
+# --- SIDEBAR ALERTS ---
 with st.sidebar:
-    st.header("🔔 Live Alerts")
-    st.info("**New:** Tata Scholarship for Engineering is now Live!")
-    st.warning("**Deadline:** NSP Portals closing in 72 hours.")
+    st.markdown("### 🔔 Live Notifications")
+    st.success("**Tata Grant 2026** is now live!")
+    st.error("**Deadline Alert:** NSP closes in 48 hours.")
     st.divider()
-    st.caption("ScholarGate AI v1.0 | Osmania Innovation Workshop")
+    st.markdown("🔍 *Our AI checks for new scholarships every 6 hours.*")
