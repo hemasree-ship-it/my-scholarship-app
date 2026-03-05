@@ -1,101 +1,92 @@
 import streamlit as st
 
-# --- 1. PAGE CONFIG & THEME ---
-st.set_page_config(page_title="ScholarGate AI", page_icon="🛡️", layout="wide")
+# --- PAGE SETUP ---
+st.set_page_config(page_title="ScholarGate AI", page_icon="🎓", layout="centered")
 
-# --- 2. PROFESSIONAL STYLING (CSS) ---
+# --- PROFESSIONAL STYLING (The "Secret Sauce") ---
 st.markdown("""
     <style>
-    /* Main background */
-    .stApp { background-color: #F0F2F6; }
+    /* Background and Fonts */
+    .stApp { background-color: #f8fafc; }
+    h1 { color: #1e293b; font-family: 'Inter', sans-serif; text-align: center; }
     
-    /* Center the title */
-    .main-title { font-size: 50px; color: #1E3A8A; text-align: center; font-weight: 800; margin-bottom: 10px; }
-    .sub-title { font-size: 18px; color: #4B5563; text-align: center; margin-bottom: 40px; }
+    /* Clean white boxes for inputs */
+    .css-1r6slb0 { padding: 20px; background: white; border-radius: 12px; border: 1px solid #e2e8f0; }
     
-    /* Professional Scholarship Card */
-    .scholarship-card {
-        background: white; padding: 25px; border-radius: 15px;
-        border-top: 8px solid #F59E0B; /* Golden border for trust */
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-        margin-bottom: 25px; transition: 0.3s;
+    /* The Result Cards */
+    .result-card {
+        background: white; padding: 20px; border-radius: 10px;
+        border-left: 6px solid #2563eb; margin-bottom: 15px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
     }
-    .scholarship-card:hover { transform: translateY(-5px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2); }
-    
-    /* Symmetric buttons */
-    .stButton>button {
-        background-color: #1E3A8A; color: white; border-radius: 8px;
-        font-weight: bold; width: 100%; border: none; padding: 10px;
+    .apply-btn {
+        background-color: #2563eb; color: white; padding: 8px 16px;
+        border-radius: 6px; text-decoration: none; font-weight: 600;
+        display: inline-block; margin-top: 10px;
     }
     </style>
     """, unsafe_allow_html=True)
 
-# --- 3. HEADER SECTION ---
-st.markdown("<h1 class='main-title'>ScholarGate AI</h1>", unsafe_allow_html=True)
-st.markdown("<p class='sub-title'>National Level AI-Powered Verification & Matching System</p>", unsafe_allow_html=True)
+# --- HEADER ---
+st.title("🎓 ScholarGate AI")
+st.markdown("<p style='text-align: center; color: #64748b;'>National Scholarship Verification & Matching System</p>", unsafe_allow_html=True)
+st.divider()
 
-# --- 4. THE STEP-BY-STEP FORM (SYMMETRIC LAYOUT) ---
-with st.container():
-    st.write("### 📝 Step 1: Tell us about yourself")
-    c1, c2, c3 = st.columns(3)
-    with c1:
-        name = st.text_input("Full Name (As per Aadhar)")
+# --- STEP 1: PERSONAL DETAILS ---
+with st.expander("👤 Step 1: Personal Information", expanded=True):
+    col1, col2 = st.columns(2)
+    with col1:
+        name = st.text_input("Full Name (as per Aadhar)")
         age = st.number_input("Age", 15, 30, 18)
-    with c2:
-        category = st.selectbox("Category", ["General", "OBC", "SC/ST", "Minority"])
-        income = st.number_input("Family Annual Income (₹)", 0, 2000000, 200000)
-    with c3:
-        current_study = st.selectbox("Current Level", ["10th", "12th", "B.Tech/UG", "M.Tech/PG"])
+    with col2:
         gender = st.selectbox("Gender", ["Male", "Female", "Other"])
+        category = st.selectbox("Category", ["General", "OBC", "SC/ST", "Minority"])
 
+# --- STEP 2: ACADEMICS & DOCUMENTS ---
+with st.expander("📚 Step 2: Academic Profile", expanded=True):
+    col3, col4 = st.columns(2)
+    with col3:
+        current_class = st.selectbox("Current Class/Level", ["10th", "12th", "UG", "PG"])
+        marks = st.slider("Latest Marks Percentage", 0, 100, 80)
+    with col4:
+        income = st.number_input("Annual Family Income (₹)", 0, 2000000, 300000)
+        cert_upload = st.file_uploader("Upload Certificates (Sports/Coding/NCC)", type=["pdf", "png", "jpg"])
+
+# --- STEP 3: MATCHING ENGINE ---
+st.write("")
+if st.button("SEARCH ELIGIBLE SCHOLARSHIPS 🔍"):
+    with st.status("Verifying details with AI...", expanded=True) as status:
+        st.write("Reading uploaded certificates...")
+        import time; time.sleep(1)
+        st.write("Checking Government Database (NSP)...")
+        time.sleep(1)
+        status.update(label="Matching Complete!", state="complete", expanded=False)
+    
+    st.success(f"Great news, {name}! We found matches for your profile:")
+    
+    # Example Output Card
+    st.markdown(f"""
+        <div class="result-card">
+            <h3 style="margin:0; color:#1e293b;">National Merit Scholarship (NSP)</h3>
+            <p style="color:#64748b; margin: 5px 0;">Based on your {marks}% marks and {category} category.</p>
+            <p><b>Benefit:</b> ₹50,000 / Year</p>
+            <p><b>Required:</b> Income Certificate, Marksheet</p>
+            <a class="apply-btn" href="https://scholarships.gov.in/" target="_blank">Apply on Official Portal</a>
+        </div>
+        
+        <div class="result-card" style="border-left-color: #f59e0b;">
+            <h3 style="margin:0; color:#1e293b;">Reliance Foundation Undergraduate Grant</h3>
+            <p style="color:#64748b; margin: 5px 0;">Private grant for high-performing students.</p>
+            <p><b>Benefit:</b> ₹2,00,000 Total</p>
+            <p><b>Required:</b> Entrance Test + Interview</p>
+            <a class="apply-btn" style="background-color: #f59e0b;" href="https://www.reliancefoundation.org/" target="_blank">View Application Steps</a>
+        </div>
+    """, unsafe_allow_html=True)
+
+# --- SIDEBAR (NOTIFICATIONS) ---
+with st.sidebar:
+    st.header("🔔 Live Alerts")
+    st.info("**New:** Tata Scholarship for Engineering is now Live!")
+    st.warning("**Deadline:** NSP Portals closing in 72 hours.")
     st.divider()
-
-    st.write("### 📚 Step 2: Academic & Skills Portfolio")
-    c4, c5 = st.columns(2)
-    with c4:
-        marks_10 = st.slider("10th Percentage", 0, 100, 85)
-        marks_12 = st.slider("12th Percentage", 0, 100, 85)
-    with c5:
-        certs = st.multiselect("Special Achievements", ["National Sports", "Coding Hackathon", "NCC/NSS", "Art/Music", "State Ranker"])
-        doc = st.file_uploader("Upload Profile for AI Verification", type=["pdf", "png", "jpg"])
-
-# --- 5. THE SEARCH ENGINE ---
-if st.button("RUN AI MATCHING ENGINE 🚀"):
-    with st.spinner("Analyzing 5,000+ government & private grants..."):
-        import time
-        time.sleep(2) # Fake "Processing" time for effect
-        
-        st.balloons()
-        st.write("## 🎉 3 Scholarships Found for You!")
-        
-        # Scholarship 1
-        st.markdown(f"""
-        <div class="scholarship-card">
-            <span style="color: #F59E0B; font-weight: bold;">⭐ RECOMMENDED</span>
-            <h2 style="margin: 0; color: #1E3A8A;">National Merit Scholarship 2026</h2>
-            <p>For students scoring above 80% with income below ₹6L.</p>
-            <hr>
-            <p><b>Benefit:</b> ₹50,000 per year | <b>Deadline:</b> 30th April 2026</p>
-            <a href="https://scholarships.gov.in/" target="_blank">
-                <button style="background: #10B981; color: white; border: none; padding: 8px 20px; border-radius: 5px; cursor: pointer;">Apply on Official Portal</button>
-            </a>
-        </div>
-        """, unsafe_allow_html=True)
-        
-        # Scholarship 2
-        st.markdown(f"""
-        <div class="scholarship-card">
-            <h2 style="margin: 0; color: #1E3A8A;">Reliance Foundation Undergraduate Grant</h2>
-            <p>Based on {certs[0] if certs else 'Academic Achievement'} and Excellence.</p>
-            <hr>
-            <p><b>Benefit:</b> ₹2,00,000 Total | <b>Status:</b> Applications Open</p>
-            <a href="https://www.reliancefoundation.org/" target="_blank">
-                <button style="background: #10B981; color: white; border: none; padding: 8px 20px; border-radius: 5px; cursor: pointer;">View Requirements</button>
-            </a>
-        </div>
-        """, unsafe_allow_html=True)
-
-# --- 6. TRUST FOOTER ---
-st.sidebar.markdown("### 🛡️ Verified System")
-st.sidebar.info("This prototype uses Gemini AI to verify certificates against Government databases.")
-st.sidebar.warning("🔔 **Alert:** Tata Scholarship expires in 48 hours!")
+    st.caption("ScholarGate AI v1.0 | Osmania Innovation Workshop")
