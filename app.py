@@ -1,223 +1,153 @@
 import streamlit as st
 import time
 
-st.set_page_config(page_title="ScholarGate AI", page_icon="🎓", layout="wide")
+# ---------- PAGE CONFIG ----------
+st.set_page_config(
+    page_title="ScholarMatch AI",
+    page_icon="🎓",
+    layout="wide"
+)
 
-# ---------- SESSION STATE ----------
-if "step" not in st.session_state:
-    st.session_state.step = 1
-
-# ---------- CSS ----------
+# ---------- GLOBAL CSS ----------
 st.markdown("""
 <style>
-
-body{
-background:#f4f7fc;
-}
-
-.header-box{
-background:linear-gradient(135deg,#1a73e8,#3b82f6);
-padding:35px;
-border-radius:18px;
-text-align:center;
-color:white;
-box-shadow:0px 10px 25px rgba(0,0,0,0.15);
-margin-bottom:25px;
-}
-
-.header-title{
-font-size:42px;
-font-weight:700;
-margin-bottom:8px;
-}
-
-.header-sub{
-font-size:18px;
-opacity:0.95;
-}
-
-.button-row{
-display:flex;
-justify-content:center;
-gap:20px;
-margin-top:20px;
-}
-
+.main { background-color:#f4f6f9; }
 .stButton>button{
-border-radius:25px;
-height:45px;
-width:180px;
-font-size:16px;
-font-weight:500;
+    width:100%;
+    border-radius:25px;
+    height:45px;
+    font-size:16px;
+    background-color:#1a73e8;
+    color:white;
 }
-
+.scholarship-card{
+    background:white;
+    padding:25px;
+    border-radius:15px;
+    box-shadow:0px 6px 16px rgba(0,0,0,0.1);
+    margin-bottom:25px;
+}
+.badge{
+    background:#e8f0fe;
+    color:#1a73e8;
+    padding:6px 14px;
+    border-radius:20px;
+    font-size:13px;
+    margin:4px;
+    display:inline-block;
+}
+.footer{ text-align:center; color:gray; margin-top:50px; }
 </style>
 """, unsafe_allow_html=True)
+
+# ---------- SIDEBAR & LANGUAGE SWITCHER ----------
+with st.sidebar:
+    st.header("🌐 Regional Settings")
+    # LANGUAGE SWITCHER (New Feature)
+    lang = st.selectbox("Select Language", ["English", "తెలుగు (Telugu)", "हिन्दी (Hindi)"])
+    st.write(f"Currently viewing in: *{lang}*")
+    st.divider()
+    
+    st.header("🔔 Scholarship Alerts")
+    st.success("New: Tata Scholarship 2026 OPEN")
+    st.sidebar.info("Deadline: NSP closes in 4 days")
+    st.divider()
+    st.subheader("📊 Platform Stats")
+    st.write("Students Helped: *12,000+*")
+    st.write("Scholarships Listed: *150+*")
+
 # ---------- HEADER ----------
-st.markdown("""
-<div class="header-box">
-
-<div class="header-title">
-🎓 ScholarGate AI
+title_text = "ScholarMatch AI" if lang == "English" else "స్కాలర్-మ్యాచ్ AI" if lang == "తెలుగు (Telugu)" else "स्कॉलर-मैच AI"
+st.markdown(f"""
+<div style="background:white; padding:30px; border-radius:12px; box-shadow:0 4px 12px rgba(0,0,0,0.08); text-align:center;">
+<h1 style="color:#1a73e8;">🎓 {title_text}</h1>
+<p style="font-size:18px;color:#555;">AI-powered scholarship discovery platform for Indian students</p>
+<div style="margin-top:15px;">
+<span class="badge">✔ Verified Opportunities</span>
+<span class="badge">🏛 Govt & Private Grants</span>
+<span class="badge">🔒 Secure Profile</span>
 </div>
-
-<div class="header-sub">
-AI-powered scholarship discovery platform for Indian students
-</div>
-
 </div>
 """, unsafe_allow_html=True)
 
-# ---------- STEP INDICATOR ----------
-steps = st.columns(3)
+st.info("Complete your profile to unlock scholarships that match your eligibility.")
 
-steps[0].write("### 1️⃣ Personal Info")
-steps[1].write("### 2️⃣ Academic Profile")
-steps[2].write("### 3️⃣ Results")
+# ---------- PROGRESS ----------
+progress = st.progress(0)
 
-# ---------- STEP 1 ----------
-if st.session_state.step == 1:
+# ---------- TABS ----------
+tab1, tab2, tab3 = st.tabs(["👤 Personal Info", "📚 Academic Profile", "🏆 Scholarship Matches"])
 
-    st.markdown('<div class="card">', unsafe_allow_html=True)
-
-    st.subheader("Personal Information")
-
+# ---------- PERSONAL INFO ----------
+with tab1:
+    st.subheader("Basic Details")
     col1, col2 = st.columns(2)
-
     with col1:
-        st.session_state.name = st.text_input("Full Name")
-        st.session_state.age = st.number_input("Age",15,30,18)
-
+        name = st.text_input("Full Name")
+        age = st.number_input("Age", 10, 30, 18)
     with col2:
-        st.session_state.gender = st.selectbox("Gender",["Male","Female","Other"])
-        st.session_state.category = st.selectbox("Category",["General","OBC","SC","ST","EWS"])
+        current_class = st.selectbox("Current Class", ["10th", "12th", "B.Tech 1st Year", "B.Tech 2nd Year", "Other"])
+        gender = st.radio("Gender", ["Male", "Female", "Other"], horizontal=True)
+    progress.progress(33)
 
-    st.session_state.state = st.selectbox(
-        "State of Domicile",
-        ["Telangana","Andhra Pradesh","Karnataka","Tamil Nadu","Other"]
-    )
+# ---------- ACADEMIC PROFILE ----------
+with tab2:
+    st.subheader("Academic Information")
+    col3, col4 = st.columns(2)
+    with col3:
+        marks_10 = st.number_input("10th Marks (%)", 0, 100, 85)
+        marks_12 = st.number_input("12th Marks (%)", 0, 100, 85)
+    with col4:
+        income = st.number_input("Family Annual Income (₹)", 0, 2000000, 300000)
+        certificates = st.multiselect("Skills / Achievements", ["Sports (National)", "NCC", "Coding", "Music", "None"])
+    st.file_uploader("Upload Marks Card (Optional AI Verification)", type=["pdf", "jpg", "png"])
+    progress.progress(66)
 
-    st.markdown("</div>", unsafe_allow_html=True)
-
-    if st.button("Next ➜"):
-        col1, col2, col3 = st.columns([1,1,1]
-                                      with col2:
-                                          next_btn = st.button("Next ➜")
-
-# ---------- STEP 2 ----------
-elif st.session_state.step == 2:
-
-    st.markdown('<div class="card">', unsafe_allow_html=True)
-
-    st.subheader("Academic Profile")
-
-    col1,col2 = st.columns(2)
-
-    with col1:
-        st.session_state.marks10 = st.number_input("10th Marks %",0,100,85)
-        st.session_state.marks12 = st.number_input("12th Marks %",0,100,85)
-
-    with col2:
-        st.session_state.income = st.number_input("Family Annual Income ₹",0,2000000,300000)
-        st.session_state.skills = st.multiselect(
-            "Skills",
-            ["Coding","Sports","NCC","Music","None"]
-        )
-
-    st.file_uploader("Upload Marks Card")
-
-    st.markdown("</div>", unsafe_allow_html=True)
-
-    col1,col2 = st.columns(2)
-
-    with col1:
-        if st.button("⬅ Back"):
-            st.session_state.step = 1
-            st.rerun()
-
-    with col2:
-        if st.button("Next ➜"):
-            st.session_state.step = 3
-            st.rerun()
-
-# ---------- STEP 3 ----------
-elif st.session_state.step == 3:
-
-    st.markdown("""
-    <div class="matchbox">
-    ✨ AI Powered Matching
-    <br><br>
-    Our AI analyzes your academic profile and income
-    to find scholarships you are eligible for.
-    </div>
-    """, unsafe_allow_html=True)
-
+# ---------- SCHOLARSHIP MATCHES ----------
+with tab3:
+    st.subheader("AI Scholarship Matching")
+    
     if st.button("Find My Scholarships 🔎"):
-
-        with st.spinner("AI analyzing your profile..."):
-            time.sleep(2)
-
-        scholarships = [
-
-        {
-        "name":"National Scholarship Portal",
-        "min":80,
-        "income":600000,
-        "link":"https://scholarships.gov.in/"
-        },
-
-        {
-        "name":"Reliance Foundation Scholarship",
-        "min":75,
-        "income":800000,
-        "link":"https://www.reliancefoundation.org/"
-        },
-
-        {
-        "name":"Tata Scholarship",
-        "min":85,
-        "income":500000,
-        "link":"https://www.tatatrusts.org/"
-        }
-
+        with st.spinner("AI analyzing your academic profile..."):
+            time.sleep(1.5)
+        
+        # We start by assuming nothing is found
+        results = [
+            {"name": "National Scholarship Portal (NSP)", "min": 80, "link": "https://scholarships.gov.in/", "desc": "Government of India merit support."},
+            {"name": "Reliance Foundation Scholarship", "min": 75, "link": "https://www.reliancefoundation.org/", "desc": "Private merit-based grant."}
         ]
 
-        matches = []
+        # Filter logic
+        matched_list = [s for s in results if marks_12 >= s["min"] and income <= 600000]
 
-        for s in scholarships:
-            if st.session_state.marks12 >= s["min"] and st.session_state.income <= s["income"]:
-                matches.append(s)
-
-        if matches:
-
-            st.success(f"We found {len(matches)} scholarships for you!")
-
-            for s in matches:
-
+        if matched_list:
+            # ONLY SHOW ANIMATION IF MATCHES EXIST
+            st.balloons()
+            st.success(f"🎊 Amazing! We found {len(matched_list)} scholarships for you, {name}!")
+            
+            for s in matched_list:
                 st.markdown(f"""
-                <div class="card">
-
-                <h3>{s['name']}</h3>
-
-                Eligible based on your marks and income.
-
-                <br><br>
-
-                <a href="{s['link']}" target="_blank">
-                <button style="background:#1a73e8;color:white;border:none;padding:10px 20px;border-radius:20px;">
-                Apply Now
-                </button>
-                </a>
-
+                <div class="scholarship-card">
+                    <h3 style="color:#1a73e8;">✅ {s['name']}</h3>
+                    <p>{s['desc']}</p>
+                    <p><b>Eligibility:</b> Criteria Met</p>
+                    <a href="{s['link']}" target="_blank">
+                        <button style="background:#1a73e8; color:white; padding:10px 22px; border:none; border-radius:20px; cursor:pointer;">
+                            Apply Now
+                        </button>
+                    </a>
                 </div>
                 """, unsafe_allow_html=True)
-
+            
+            # Show download button only if matches found
+            st.divider()
+            report_text = f"Scholarship Report for {name}\nStatus: ELIGIBLE\nMatches: {', '.join([x['name'] for x in matched_list])}"
+            st.download_button(
+                label="📥 Download Eligibility Report",
+                data=report_text,
+                file_name=f"ScholarMatch_{name}.txt",
+                mime="text/plain"
+            )
         else:
-            st.warning("No scholarships matched your profile.")
-
-    if st.button("⬅ Back"):
-        col1, col2, col3 = st.columns([1,1,1])
-        with col1:
-        back_btn = st.button("⬅ Back")
-        with col3:
-        next_btn = st.button("Next ➜")
+            # No animation here, just a helpful warning
+            st.warning("No scholarships matched your current profile. Try adjusting your details or check back later!")
