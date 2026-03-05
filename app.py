@@ -1,116 +1,201 @@
 import streamlit as st
+import time
 
-# 1. Page Config - Using a standard title and layout
-st.set_page_config(page_title="ScholarGate AI", page_icon="🎓", layout="wide")
+# PAGE CONFIG
+st.set_page_config(
+    page_title="ScholarMatch AI",
+    page_icon="🎓",
+    layout="wide"
+)
 
-# 2. Enhanced CSS - Clean, Symmetric, and Trustworthy
+# ---------- CUSTOM CSS ----------
 st.markdown("""
-    <style>
-    /* Main Background */
-    .stApp { background-color: #fcfcfd; }
-    
-    /* Center and Style Title */
-    .main-header { text-align: center; color: #1e293b; font-size: 38px; font-weight: 700; margin-bottom: 5px; }
-    .sub-header { text-align: center; color: #64748b; font-size: 16px; margin-bottom: 30px; }
-    
-    /* Professional Card UI */
-    .scholarship-card {
-        padding: 24px;
-        border-radius: 12px;
-        background-color: white;
-        border: 1px solid #e2e8f0;
-        border-left: 6px solid #2563eb;
-        margin-bottom: 20px;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-    }
-    
-    /* Button Styling */
-    .stButton>button {
-        border-radius: 8px;
-        font-weight: 600;
-        background-color: #2563eb;
-        color: white;
-        transition: all 0.3s ease;
-    }
-    .stButton>button:hover { background-color: #1d4ed8; border-color: #1d4ed8; }
-    
-    /* Input field spacing */
-    div.stBlock { padding: 10px; }
-    </style>
-    """, unsafe_allow_html=True)
+<style>
 
-# --- HEADER SECTION ---
-st.markdown("<div class='main-header'>ScholarGate AI</div>", unsafe_allow_html=True)
-st.markdown("<div class='sub-header'>Verified Scholarship Intelligence Platform</div>", unsafe_allow_html=True)
+.main {
+    background-color: #f4f6f9;
+}
 
-# --- PROGRESS INDICATOR ---
-# This makes it feel professional and symmetric
-step = st.select_slider("Application Progress", options=["Personal Info", "Academic Profile", "Results"])
-st.divider()
+.header-box{
+    background-color:#ffffff;
+    padding:20px;
+    border-radius:10px;
+    box-shadow:0px 4px 12px rgba(0,0,0,0.08);
+    margin-bottom:20px;
+}
 
-# --- FORM STRUCTURE ---
-if step == "Personal Info":
-    st.subheader("👤 Basic Information")
-    with st.container():
-        col1, col2 = st.columns(2)
-        with col1:
-            name = st.text_input("Full Name", placeholder="As per official documents")
-            age = st.number_input("Age", 15, 30, 18)
-        with col2:
-            current_class = st.selectbox("Current Level of Study", ["10th", "12th", "UG (B.Tech/B.Sc)", "PG (M.Tech)", "PhD"])
-            gender = st.radio("Gender", ["Male", "Female", "Other"], horizontal=True)
-    st.info("Tip: Enter your name exactly as it appears on your Aadhar card for faster verification.")
+.stButton>button{
+    width:100%;
+    border-radius:25px;
+    height:45px;
+    font-size:16px;
+    background-color:#1a73e8;
+    color:white;
+}
 
-elif step == "Academic Profile":
-    st.subheader("📚 Academic & Financial Background")
-    with st.container():
-        c1, c2 = st.columns(2)
-        with c1:
-            m10 = st.number_input("10th Standard Marks (%)", 0, 100, 80)
-            m12 = st.number_input("12th Standard Marks (%)", 0, 100, 80)
-        with c2:
-            inc = st.number_input("Family Annual Income (₹)", 0, 2500000, 400000)
-            skills = st.multiselect("Special Categories", ["Sports", "NCC/NSS", "Coding", "Arts", "Differently Abled"])
-    
-    st.markdown("---")
-    st.write("#### Document Verification")
-    st.file_uploader("Upload Marksheet/Income Certificate for AI validation", type=["pdf", "png", "jpg"])
+.scholarship-card{
+    background:white;
+    padding:20px;
+    border-radius:12px;
+    margin-bottom:20px;
+    border-left:6px solid #1a73e8;
+    box-shadow:0px 4px 10px rgba(0,0,0,0.08);
+}
 
-elif step == "Results":
-    st.subheader("💰 Personalized Matches")
-    # For demo purposes, we define dummy variables if they aren't saved in session
-    # In a real app, you'd use st.session_state
-    
-    if st.button("Analyze & Find Scholarships ✨"):
-        with st.spinner("AI is scanning national databases..."):
-            import time
-            time.sleep(1.5) # Simulates AI processing
-            
-            results = [
-                {"name": "National Scholarship Portal (NSP)", "min": 75, "link": "https://scholarships.gov.in/", "desc": "Official Government of India portal for all central schemes."},
-                {"name": "Reliance Foundation Scholars", "min": 80, "link": "https://www.reliancefoundation.org/", "desc": "Prestigious grant for high-achieving undergraduate students."}
-            ]
-            
-            # This makes the output look symmetric and clean
-            for s in results:
+.badge{
+    background:#e8f0fe;
+    color:#1a73e8;
+    padding:4px 10px;
+    border-radius:15px;
+    font-size:12px;
+}
+
+.footer{
+    text-align:center;
+    color:gray;
+    margin-top:40px;
+}
+
+</style>
+""", unsafe_allow_html=True)
+
+# ---------- HEADER ----------
+st.markdown("""
+<div class="header-box">
+<h1>🎓 ScholarMatch AI</h1>
+<p>AI-powered scholarship discovery platform for Indian students.</p>
+<span class="badge">Verified Opportunities</span>
+<span class="badge">Government & Private Grants</span>
+<span class="badge">Secure Profile</span>
+</div>
+""", unsafe_allow_html=True)
+
+st.info("Complete your profile to unlock scholarships that match your eligibility.")
+
+# ---------- PROGRESS BAR ----------
+progress = st.progress(0)
+
+# ---------- TABS ----------
+tab1, tab2, tab3 = st.tabs(["👤 Personal Info", "📚 Academic Profile", "🏆 Scholarship Matches"])
+
+# ---------- TAB 1 ----------
+with tab1:
+
+    st.subheader("Basic Details")
+
+    col1, col2 = st.columns(2)
+
+    with col1:
+        name = st.text_input("Full Name")
+        age = st.number_input("Age", 10, 30)
+
+    with col2:
+        current_class = st.selectbox(
+            "Current Class",
+            ["10th", "12th", "B.Tech 1st Year", "B.Tech 2nd Year", "Other"]
+        )
+
+        gender = st.radio(
+            "Gender",
+            ["Male", "Female", "Other"],
+            horizontal=True
+        )
+
+    progress.progress(30)
+
+# ---------- TAB 2 ----------
+with tab2:
+
+    st.subheader("Academic Information")
+
+    col3, col4 = st.columns(2)
+
+    with col3:
+        marks_10 = st.number_input("10th Marks (%)", 0, 100)
+        marks_12 = st.number_input("12th Marks (%)", 0, 100)
+
+    with col4:
+        income = st.number_input("Family Annual Income (₹)", 0, 2000000)
+
+        certificates = st.multiselect(
+            "Skills / Achievements",
+            ["Sports (National)", "NCC", "Coding", "Music", "None"]
+        )
+
+    st.file_uploader(
+        "Upload Marks Card (Optional Verification)",
+        type=["pdf", "jpg", "png"]
+    )
+
+    progress.progress(70)
+
+# ---------- TAB 3 ----------
+with tab3:
+
+    st.subheader("AI Scholarship Matching")
+
+    if st.button("Find My Scholarships 🔎"):
+
+        with st.spinner("AI is analyzing your eligibility..."):
+            time.sleep(2)
+
+        results = [
+            {
+                "name": "National Scholarship Portal (NSP)",
+                "min": 80,
+                "link": "https://scholarships.gov.in/",
+                "desc": "Government of India scholarship program supporting meritorious students."
+            },
+            {
+                "name": "Reliance Foundation Scholarship",
+                "min": 75,
+                "link": "https://www.reliancefoundation.org/",
+                "desc": "Private merit-based grant for undergraduate students."
+            }
+        ]
+
+        found = False
+
+        for s in results:
+
+            if marks_12 >= s["min"] and income <= 600000:
+
+                found = True
+
                 st.markdown(f"""
                 <div class="scholarship-card">
-                    <h3 style="color: #1e293b; margin-top: 0;">{s['name']}</h3>
-                    <p style="color: #475569;">{s['desc']}</p>
-                    <p><b>Status:</b> ✅ You are Eligible</p>
-                    <a href="{s['link']}" target="_blank" style="text-decoration: none;">
-                        <div style="background-color: #10b981; color: white; padding: 10px 20px; border-radius: 6px; display: inline-block; font-weight: bold;">
-                            Go to Application Portal →
-                        </div>
-                    </a>
+                <h3>✅ {s['name']}</h3>
+                <p>{s['desc']}</p>
+
+                <p><b>Eligibility:</b> Minimum {s['min']}% marks</p>
+                <p><b>Steps:</b> Register → Upload Documents → Verification</p>
+
+                <a href="{s['link']}" target="_blank">Apply on Official Website</a>
                 </div>
                 """, unsafe_allow_html=True)
-            st.balloons()
 
-# --- SIDEBAR ALERTS ---
-with st.sidebar:
-    st.markdown("### 🔔 Live Notifications")
-    st.success("**Tata Grant 2026** is now live!")
-    st.error("**Deadline Alert:** NSP closes in 48 hours.")
-    st.divider()
-    st.markdown("🔍 *Our AI checks for new scholarships every 6 hours.*")
+        if not found:
+            st.warning("No scholarships matched your profile yet. Try updating your details.")
+
+    progress.progress(100)
+
+# ---------- SIDEBAR ----------
+st.sidebar.header("🔔 Scholarship Alerts")
+
+st.sidebar.success("New: Tata Scholarship 2026 OPEN")
+
+st.sidebar.info("Deadline: NSP closes in 4 days")
+
+st.sidebar.write("---")
+
+st.sidebar.write("📊 Platform Stats")
+st.sidebar.write("Students Helped: **12,000+**")
+st.sidebar.write("Scholarships Listed: **150+**")
+
+# ---------- FOOTER ----------
+st.markdown("""
+<div class="footer">
+<p>ScholarMatch AI • Helping students discover funding opportunities</p>
+<p>Disclaimer: Always verify scholarship details on official websites.</p>
+</div>
+""", unsafe_allow_html=True)
