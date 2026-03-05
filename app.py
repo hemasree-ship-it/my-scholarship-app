@@ -12,49 +12,59 @@ st.markdown("""
 <style>
 
 body{
-background:#f2f5fb;
+background:#f4f7fc;
 }
 
-.header{
-background:white;
-padding:25px;
-border-radius:15px;
-box-shadow:0px 5px 18px rgba(0,0,0,0.08);
-margin-bottom:25px;
+.header-box{
+background:linear-gradient(135deg,#1a73e8,#3b82f6);
+padding:35px;
+border-radius:18px;
 text-align:center;
-}
-
-.card{
-background:white;
-padding:30px;
-border-radius:15px;
-box-shadow:0px 6px 20px rgba(0,0,0,0.08);
-margin-top:20px;
-}
-
-.matchbox{
-background:#1f2a44;
 color:white;
-padding:25px;
-border-radius:15px;
-margin-bottom:20px;
+box-shadow:0px 10px 25px rgba(0,0,0,0.15);
+margin-bottom:25px;
+}
+
+.header-title{
+font-size:42px;
+font-weight:700;
+margin-bottom:8px;
+}
+
+.header-sub{
+font-size:18px;
+opacity:0.95;
+}
+
+.button-row{
+display:flex;
+justify-content:center;
+gap:20px;
+margin-top:20px;
 }
 
 .stButton>button{
 border-radius:25px;
 height:45px;
-width:150px;
+width:180px;
 font-size:16px;
+font-weight:500;
 }
 
 </style>
 """, unsafe_allow_html=True)
-
 # ---------- HEADER ----------
 st.markdown("""
-<div class="header">
-<h2>🎓 ScholarGate AI</h2>
-<p>AI-powered scholarship discovery platform for Indian students</p>
+<div class="header-box">
+
+<div class="header-title">
+🎓 ScholarGate AI
+</div>
+
+<div class="header-sub">
+AI-powered scholarship discovery platform for Indian students
+</div>
+
 </div>
 """, unsafe_allow_html=True)
 
@@ -90,8 +100,9 @@ if st.session_state.step == 1:
     st.markdown("</div>", unsafe_allow_html=True)
 
     if st.button("Next ➜"):
-        st.session_state.step = 2
-        st.rerun()
+        col1, col2, col3 = st.columns([1,1,1]
+                                      with col2:
+                                          next_btn = st.button("Next ➜")
 
 # ---------- STEP 2 ----------
 elif st.session_state.step == 2:
@@ -205,5 +216,8 @@ elif st.session_state.step == 3:
             st.warning("No scholarships matched your profile.")
 
     if st.button("⬅ Back"):
-        st.session_state.step = 2
-        st.rerun()
+        col1, col2, col3 = st.columns([1,1,1])
+        with col1:
+        back_btn = st.button("⬅ Back")
+        with col3:
+        next_btn = st.button("Next ➜")
